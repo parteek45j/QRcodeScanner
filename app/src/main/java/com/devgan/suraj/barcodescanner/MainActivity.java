@@ -50,8 +50,13 @@ public class MainActivity extends AppCompatActivity {
         Frame frame = new Frame.Builder()
                 .setBitmap(mbitmap).build();
         SparseArray<Barcode> barcodeSparseArray = detector.detect(frame);
-        Barcode result = barcodeSparseArray.valueAt(0);
-        txtresult.setText(result.rawValue);
+        if (barcodeSparseArray.size()>0) {
+            Barcode result = barcodeSparseArray.valueAt(0);
+            txtresult.setText(result.rawValue);
+        }else {
+            Toast.makeText(this, "Select a QR code Or QR Code is Not Clear", Toast.LENGTH_SHORT).show();
+        }
+
 
 
     }

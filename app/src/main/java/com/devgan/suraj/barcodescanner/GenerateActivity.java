@@ -1,13 +1,17 @@
 package com.devgan.suraj.barcodescanner;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -29,6 +33,10 @@ public class GenerateActivity extends AppCompatActivity {
     ImageView imgcode;
     String text2Qr="";
     private static final String IMAGE_DIRECTORY = "/QRcodeImages";
+    ImageButton buttonWhatsapp;
+    Bitmap bitmap;
+    File f;
+    String path="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +44,7 @@ public class GenerateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_generate);
         text = (findViewById(R.id.edt));
         imgcode = (findViewById(R.id.itscode));
+        buttonWhatsapp = (findViewById(R.id.whatsapp));
     }
 
     public void btngenerate(View view) {
@@ -49,9 +58,9 @@ public class GenerateActivity extends AppCompatActivity {
         try {
             BitMatrix matrix = formatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,200,200);
             BarcodeEncoder encoder = new BarcodeEncoder();
-            Bitmap bitmap = encoder.createBitmap(matrix);
+             bitmap = encoder.createBitmap(matrix);
             imgcode.setImageBitmap(bitmap);
-            String path = saveImage(bitmap);  //give read write permission
+            path = saveImage(bitmap);  //give read write permission
             Toast.makeText(GenerateActivity.this, "QRCode saved to -> "+path, Toast.LENGTH_SHORT).show();
         } catch (WriterException e) {
             e.printStackTrace();
@@ -71,7 +80,7 @@ public class GenerateActivity extends AppCompatActivity {
         }
 
         try {
-            File f = new File(wallpaperDirectory, Calendar.getInstance().getTimeInMillis() + ".jpg");
+            f = new File(wallpaperDirectory, Calendar.getInstance().getTimeInMillis() + ".jpg");
             f.createNewFile();   //give read write permission
             FileOutputStream fo = new FileOutputStream(f);
             fo.write(bytes.toByteArray());
@@ -85,5 +94,24 @@ public class GenerateActivity extends AppCompatActivity {
         }
         return "";
 
+    }
+
+    public void btnWhatspp(View view) {
+        if (path.equals("")){
+            Toast.makeText(this, "Generate QR Code First", Toast.LENGTH_SHORT).show();
+        }else {
+            Uri uri = Uri.parse(path);
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.setPackage("com.whatsapp");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.setType("image/jpg");
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            try {
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(this, "Fail", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
