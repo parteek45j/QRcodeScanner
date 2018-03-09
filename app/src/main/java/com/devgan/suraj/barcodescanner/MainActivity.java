@@ -52,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
         SparseArray<Barcode> barcodeSparseArray = detector.detect(frame);
         if (barcodeSparseArray.size()>0) {
             Barcode result = barcodeSparseArray.valueAt(0);
-            txtresult.setText(result.rawValue);
+//            txtresult.setText(result.rawValue);
+            String serviceOTP=scanTxt(result.rawValue);
+            shareWhatsapp(serviceOTP);
         }else {
             Toast.makeText(this, "Select a QR code Or QR Code is Not Clear", Toast.LENGTH_SHORT).show();
         }
@@ -111,5 +113,43 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    String scanTxt(String raw){
+        StringBuilder Id=new StringBuilder();
+        for (int i=0;i<=raw.length()-1;i++) {
+            char d=raw.charAt(i);
+            if (Character.isLetter(d)){
+                int ASCII=d;
+                ASCII=ASCII+i;
+                if(ASCII==91) {
+                    d='o';
+                }else if(ASCII==92) {
+                    d='p';
+                }else if(ASCII==93) {
+                    d='q';
+                }else if(ASCII==94) {
+                    d='r';
+                }else if(ASCII==95) {
+                    d='s';
+                }else if(ASCII==96) {
+                    d='t';
+                }else {
+                    d=(char)ASCII;
+                }
+                Id.append(d);
+            }else {
+                Id.append(d);
+            }
+        }
+        Toast.makeText(this, Id, Toast.LENGTH_SHORT).show();
+        return String.valueOf(Id);
+    }
+    void shareWhatsapp(String text){
+        Intent intent=new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT,"hey");
+        intent.putExtra(Intent.EXTRA_TEXT,text);
+        startActivity(Intent.createChooser(intent,"Share Using"));
     }
 }

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.barcode.Barcode;
@@ -26,7 +27,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class GenerateActivity extends AppCompatActivity {
     EditText text;
@@ -37,6 +40,8 @@ public class GenerateActivity extends AppCompatActivity {
     Bitmap bitmap;
     File f;
     String path="";
+    String date;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,10 @@ public class GenerateActivity extends AppCompatActivity {
         text = (findViewById(R.id.edt));
         imgcode = (findViewById(R.id.itscode));
         buttonWhatsapp = (findViewById(R.id.whatsapp));
+        buttonWhatsapp.setBackgroundResource(R.drawable.whatapp1);
+        buttonWhatsapp.setEnabled(false);
+        date= DateFormat.getDateTimeInstance().format(new Date());
+
     }
 
     public void btngenerate(View view) {
@@ -52,6 +61,8 @@ public class GenerateActivity extends AppCompatActivity {
             Toast.makeText(this, "Please Enter Text", Toast.LENGTH_SHORT).show();
             return;
         }
+        buttonWhatsapp.setBackgroundResource(R.drawable.whatapp);
+        buttonWhatsapp.setEnabled(true);
         text2Qr = text.getText().toString().trim();
         MultiFormatWriter formatWriter = new MultiFormatWriter();
 
@@ -80,7 +91,7 @@ public class GenerateActivity extends AppCompatActivity {
         }
 
         try {
-            f = new File(wallpaperDirectory, Calendar.getInstance().getTimeInMillis() + ".jpg");
+            f = new File(wallpaperDirectory, date + ".jpg");
             f.createNewFile();   //give read write permission
             FileOutputStream fo = new FileOutputStream(f);
             fo.write(bytes.toByteArray());
@@ -100,6 +111,7 @@ public class GenerateActivity extends AppCompatActivity {
         if (path.equals("")){
             Toast.makeText(this, "Generate QR Code First", Toast.LENGTH_SHORT).show();
         }else {
+
             Uri uri = Uri.parse(path);
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_SEND);
