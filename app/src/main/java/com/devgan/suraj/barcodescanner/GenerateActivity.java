@@ -40,7 +40,7 @@ public class GenerateActivity extends AppCompatActivity {
     Bitmap bitmap;
     File f;
     String path="";
-    String date;
+    long date;
     TextView textView;
 
     @Override
@@ -52,7 +52,7 @@ public class GenerateActivity extends AppCompatActivity {
         buttonWhatsapp = (findViewById(R.id.whatsapp));
         buttonWhatsapp.setBackgroundResource(R.drawable.whatapp1);
         buttonWhatsapp.setEnabled(false);
-        date= DateFormat.getDateTimeInstance().format(new Date());
+        date= System.currentTimeMillis();
 
     }
 
@@ -113,12 +113,13 @@ public class GenerateActivity extends AppCompatActivity {
         }else {
 
             Uri uri = Uri.parse(path);
+            Log.e("path",path);
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_SEND);
             intent.setPackage("com.whatsapp");
             intent.putExtra(Intent.EXTRA_STREAM, uri);
             intent.setType("image/jpg");
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             try {
                 startActivity(intent);
             } catch (ActivityNotFoundException e) {

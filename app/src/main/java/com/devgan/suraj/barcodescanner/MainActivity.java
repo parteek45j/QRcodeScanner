@@ -2,9 +2,8 @@ package com.devgan.suraj.barcodescanner;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.opengl.Visibility;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
     TextView txtresult;
     Button scan;
     Uri uri, imageUri;
-    Bitmap mbitmap;
+    public Bitmap mbitmap;
     public static final int PICK_IMAGE = 1;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,17 +39,21 @@ public class MainActivity extends AppCompatActivity {
         img = (findViewById(R.id.imgview));
         txtresult = (findViewById(R.id.txtResult));
         scan.setVisibility(View.GONE);
-
+        handler=new Handler();
     }
 
 
     public void btnScan(View view) {
+
         BarcodeDetector detector = new BarcodeDetector.Builder(getApplicationContext())
                 .setBarcodeFormats(Barcode.ALL_FORMATS)
                 .build();
         Frame frame = new Frame.Builder()
-                .setBitmap(mbitmap).build();
-        SparseArray<Barcode> barcodeSparseArray = detector.detect(frame);
+                .setBitmap(mbitmap)
+                .build();
+
+        SparseArray<Barcode> barcodeSparseArray= detector.detect(frame);
+
         if (barcodeSparseArray.size()>0) {
             Barcode result = barcodeSparseArray.valueAt(0);
 //            txtresult.setText(result.rawValue);
@@ -148,8 +152,10 @@ public class MainActivity extends AppCompatActivity {
     void shareWhatsapp(String text){
         Intent intent=new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT,"hey");
-        intent.putExtra(Intent.EXTRA_TEXT,text);
+        intent.putExtra(Intent.EXTRA_SUBJECT,"Service OTP");
+        intent.putExtra(Intent.EXTRA_TEXT,"This is Service OTP:- "+text);
         startActivity(Intent.createChooser(intent,"Share Using"));
     }
+
+
 }
